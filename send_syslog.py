@@ -1,8 +1,10 @@
 import os
 import socket
+import zipfile
 import argparse
+import glob
 
-version = 0.5
+version = 0.7
 
 p = argparse.ArgumentParser(__file__,
                                  description="A syslog message generator")
@@ -23,29 +25,24 @@ p.add_argument("--log",
                     required=True,
                     help="Log filename or directory of files. May be compressed.")
 
-
-def file_or_dir():
-    if os.path.isdir(args.log):
-        filelist = os.listdir(args.log)
-        return (filelist)
-        
-        
 def send_logs():
-    count = 0
-    s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.connect((args.server,args.port))
+    tlogcount = 0 
+    for logfile in glob.glob(args.log):
+        s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.connect((args.server,args.port))
     
-    with open(args.log, 'r') as openlog:
-        for log in openlog:
-            dlog = log.encode()
-            s.sendall(dlog)
-            count += 1
-            print (count)
-    s.close()
+        with open(logfile, 'r') as openlog:
+            logcount = 0
+            for log in openlog:
+                dlog = log.encode()
+                s.sendall(dlog)
+                logcount += 1
+                tlogcount += 1
+            s.close()
+            print ("File: ", logfile, "Logs Sent: ", logcount)
+    print ("Total Logs Sent: ", tlogcount)
             
 if __name__ == "__main__":
     args = p.parse_args()
-    print("Main Function")
-    file_or_dir();
     send_logs();
