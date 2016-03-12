@@ -39,7 +39,7 @@ optional arguments:
 
   -l, 		--level		Logging output level. Default: info```
 
-
+```
 
 
 
@@ -47,23 +47,23 @@ optional arguments:
 
 Mininum:
 
-send_syslog -s x.x.x.x -f messages.log
+```send_syslog -s x.x.x.x -f messages.log```
 
 Wildcards:
 
-send_syslog -s x.x.x.x -f *.log
+```send_syslog -s x.x.x.x -f *.log```
 
 Directory - automatically recurses:
 
-send_syslog -s x.x.x.x -f /var/log
+```send_syslog -s x.x.x.x -f /var/log```
 
 Process gzip:
 
-send_syslog -s x.x.x.x -f log.gz -z
+```send_syslog -s x.x.x.x -f log.gz -z```
 
 Directory + Process all gzip's:
 
-send_syslog -s x.x.x.x -f /var/log -z
+```send_syslog -s x.x.x.x -f /var/log -z```
 
 Output:
 
@@ -72,13 +72,13 @@ Default is info level.
 
 - Debugging:
 
-  send_syslog -s x.x.x.x -f /var/log -z -l debug
+  ```send_syslog -s x.x.x.x -f /var/log -z -l debug```
 
 - No output:
 
-  send_syslog -s x.x.x.x -f /var/log -z -l quiet
+  ```send_syslog -s x.x.x.x -f /var/log -z -l quiet```
 
-```
+
 ## Caveats
 
 There isn't any verification that a "log" is actually a log. This will send
