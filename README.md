@@ -1,12 +1,16 @@
 <snippet>
   <content>
-  Send_Syslog
+ ## Send_Syslog
 
 TODO: send_syslog is a script to send (ideally) RFC5424 formatted logs to a syslog server or SIEM. The deceptively simple premise can assist with a number of use cases:
 
 ## Installation
 
-TODO: Describe the installation process
+Linux / Mac / from script requires binaryornot module.
+
+# pip install binaryornot
+
+Pre-compiled with pyinstaller for Windows.
 
 ## Usage
 
