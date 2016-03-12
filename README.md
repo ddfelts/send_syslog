@@ -12,11 +12,11 @@ Syslog over TCP is used.
 
  Usage:
 
-  -s SERVER, --server SERVER
-                        Syslog server or Receiver IP address
-  -f FILE, --file FILE  Logs to send. Can be files (messages, *.log) or
-                        directory with logs. Warning: directory will be
-                        recursed and send every text file found.
+  -s SERVER,    --server SERVER 	Syslog server or Receiver IP address
+
+  -f FILE,      --file FILE         Logs to send. Can be files (messages, *.log) or
+                                    directory with logs. Warning: directory will be
+                                    recursed and send every text file found.
 
 
 optional arguments:
