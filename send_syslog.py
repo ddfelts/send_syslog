@@ -106,29 +106,34 @@ def send_to_syslog(filename, sock, zflag):
 
     linecount = 0
     logging.debug("Function: send_to_syslog %s, send_zip=%s", filename, zflag)
-    if os.stat(file).st_size == 0:
+
+
+    if os.stat(filename).st_size > 0:
+        if is_binary(filename):
+            if zflag:
+                if filename.lower().endswith(".zip"):
+                    linecount = 0
+                    logging.info("Skipped zip: %s",
+                                 os.path.basename(filename))
+
+                elif filename.lower().endswith(".gz"):
+                    logging.info("Sending file: %s",
+                                 os.path.basename(filename))
+                    linecount = send_gzip_to_syslog(filename, sock)
+                    logging.info("Sent    file: %s: Lines: %s",
+                                 os.path.basename(filename), linecount)
+
+            else:
+                linecount = 0
+                logging.debug("Skipped binary file: %s", filename)
+        else:
+            logging.info("Sending file: %s", os.path.basename(filename))
+            linecount = send_text_to_syslog(filename, sock)
+            logging.info("Sent    file: %s: Lines: %s",
+                         os.path.basename(filename), linecount)
+    else:
         linecount = 0
         logging.info("Skipped empty file: %s", os.path.basename(filename))
-
-    if is_binary(filename):
-        if zflag:
-            if filename.lower().endswith(".zip"):
-                linecount = 0
-                logging.info("Skipped zip: %s", os.path.basename(filename))
-
-            elif filename.lower().endswith(".gz"):
-                logging.info("Sending file: %s", os.path.basename(filename))
-                linecount = send_gzip_to_syslog(filename, sock)
-                logging.info("Sent    file: %s: Lines: %s", os.path.basename(filename), linecount)
-
-        else:
-            logging.debug("Skipped binary file: %s", filename)
-            linecount = 0
-
-    else:
-        logging.info("Sending file: %s", os.path.basename(filename))
-        linecount = send_text_to_syslog(filename, sock)
-        logging.info("Sent    file: %s: Lines: %s", os.path.basename(filename), linecount)
 
     return linecount
 
@@ -138,7 +143,7 @@ def send_gzip_to_syslog(filename, sock):
 
     linecount = 0
     logging.debug("Function: send_gzip_to_syslog: %s", filename)
-    with gzip.open(file, 'rt') as zopenfile:
+    with gzip.open(filename, 'rt') as zopenfile:
         for line in zopenfile:
             sock.sendall(line.encode())
             linecount += 1
@@ -152,7 +157,7 @@ def send_text_to_syslog(filename, sock):
     linecount = 0
     logging.debug("Function: send_text_to_syslog: %s", filename)
     try:
-        with open(file, 'rt') as openfile:
+        with open(filename, 'rt') as openfile:
             for line in openfile:
                 try:
                     sock.sendall(line.encode())
@@ -163,7 +168,7 @@ def send_text_to_syslog(filename, sock):
                     sys.exit()
     except UnicodeDecodeError:
         logging.error("Aborting: %s: Invalid characters at line %s",
-                      file, linecount)
+                      filename, linecount)
     except:
         raise
 
@@ -203,7 +208,7 @@ def main():
                 logging.debug("Searching directory %s", name)
                 for filename in walk_dir(name):
                     logging.debug("Found file: %s, checking", filename)
-                    linecount = send_to_syslog(file, sock, args.zip)
+                    linecount = send_to_syslog(filename, sock, args.zip)
                     linetotal += linecount
             else:
                 linecount = send_to_syslog(args.file, sock, args.zip)
@@ -219,3 +224,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

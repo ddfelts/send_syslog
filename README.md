@@ -10,15 +10,17 @@ send_syslog is a script to send (ideally) RFC5424 formatted logs to a syslog ser
 
 ## Installation
 
-Linux / Mac / from script requires binaryornot module.
+Tested with Python 2.7 and 3.4.
+
+Requires binaryornot module for script.
 
 pip install binaryornot
 
-Pre-compiled with pyinstaller for Windows.
+Pre-compiled with pyinstaller for Windows - nothing required but the .exe
 
 ## Usage
 
-Usage:
+```Usage:
 
   -s SERVER,    --server SERVER 	Syslog server or Receiver IP address
 
@@ -35,7 +37,7 @@ optional arguments:
 
   -v,		--version   Show version number and exit
 
-  -l, 		--level		Logging output level. Default: info
+  -l, 		--level		Logging output level. Default: info```
 
 
 
@@ -77,10 +79,12 @@ Default is info level.
   send_syslog -s x.x.x.x -f /var/log -z -l quiet
 
 
-## Credits
+## Caveats
 
-Andy Walden -
-Andy.Walden @ intel dot com
+There isn't any verification that a "log" is actually a log. This will send
+most any text file including your source code respository and your collection
+of chewbacca ASCII art so do take care where you point it. /var/log is generally
+safe.
 
 ## License
 
