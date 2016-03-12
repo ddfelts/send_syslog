@@ -1,0 +1,11 @@
+03-11 21:56 root         DEBUG    ******************__main__ INITIALIZED********************
+03-11 21:56 root         DEBUG    File found at: C:\Windows
+03-11 21:56 root         DEBUG    Function: open_socket: 22.22.22.224: 514
+03-11 21:56 root         DEBUG    Socket established to 22.22.22.224 on port 514
+03-11 21:56 root         DEBUG    Searching directory C:\Windows
+03-11 21:56 root         DEBUG    Function: walk_dir: C:\Windows
+03-11 21:56 root         DEBUG    Walking path: C:\Windows['addins', 'AppCompat', 'AppPatch', 'assembly', 'BitLockerDiscoveryVolumeContents', 'Boot', 'Branding', 'CSC', 'Cursors', 'debug', 'diagnostics', 'DigitalLocker', 'Downloaded Program Files', 'ehome', 'en-US', 'Fonts', 'Globalization', 'Help', 'IME', 'inf', 'Installer', 'L2Schemas', 'LiveKernelReports', 'Logs', 'Media', 'Microsoft.NET', 'ModemLogs', 'Offline Web Pages', 'Panther', 'Performance', 'PLA', 'PolicyDefinitions', 'Prefetch', 'Registration', 'RemotePackages', 'rescache', 'Resources', 'SchCache', 'schemas', 'security', 'ServiceProfiles', 'servicing', 'Setup', 'ShellNew', 'SoftwareDistribution', 'Speech', 'system', 'System32', 'SysWOW64', 'TAPI', 'Tasks', 'Temp', 'tracing', 'twain_32', 'Vss', 'Web', 'winsxs']['bfsvc.exe', 'bootstat.dat', 'DtcInstall.log', 'explorer.exe', 'fveupdate.exe', 'HelpPane.exe', 'hh.exe', 'mib.bin', 'msdfmap.ini', 'notepad.exe', 'regedit.exe', 'setupact.log', 'setuperr.log', 'splwow64.exe', 'Starter.xml', 'system.ini', 'TSSysprep.log', 'twain.dll', 'twain_32.dll', 'twunk_16.exe', 'twunk_32.exe', 'Ultimate.xml', 'win.ini', 'WindowsShell.Manifest', 'WindowsUpdate.log', 'winhlp32.exe', 'WMSysPr9.prx', 'write.exe']
+03-11 21:56 root         DEBUG    **Returning new file**: bfsvc.exe
+03-11 21:56 root         DEBUG    Found file: C:\Windows\bfsvc.exe, checking
+03-11 21:56 root         DEBUG    Function: send_to_syslog <type 'file'>, send_zip=False
+03-11 21:56 root         INFO     Total lines Sent: 0
