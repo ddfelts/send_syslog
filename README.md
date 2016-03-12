@@ -78,7 +78,7 @@ Default is info level.
 
   send_syslog -s x.x.x.x -f /var/log -z -l quiet
 
-
+```
 ## Caveats
 
 There isn't any verification that a "log" is actually a log. This will send
