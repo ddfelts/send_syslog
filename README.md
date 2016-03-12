@@ -1,6 +1,6 @@
 <snippet>
   <content>
- ## Send_Syslog
+## Send_Syslog
 
 send_syslog is a script to send (ideally) RFC5424 formatted logs to a syslog server or SIEM. The deceptively simple premise can assist with a number of use cases:
 
