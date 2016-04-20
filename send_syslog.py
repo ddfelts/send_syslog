@@ -15,41 +15,58 @@ from glob import glob
 from binaryornot.check import is_binary
 
 __author__ = "Andy Walden"
-__version__ = ".99a"
+__version__ = "Beta4"
 __status__ = "Development"
 
 
-def parse_args():
-    """Parse command line"""
+class Args:
+ 
+    def __init__(self, args):
+        self.log_levels = ["quiet", "error", "warning", "info", "debug"]
+        self.formatter_class = argparse.RawDescriptionHelpFormatter
+           
+        self.parser = argparse.ArgumentParser(formatter_class=self.formatter_class, 
+                                              description="Send files to syslog")
+        self.args = args
+        
+        
+        self.parser.add_argument("-s", "--server",
+                                 required=True,
+                                 help="Syslog server or Receiver IP address")
+ 
+        self.parser.add_argument("-f", "--file",
+                                 required=True,
+                                 help="Logs to send. Can be files (messages, \
+                                 *.log) or directory with logs. Warning: \
+                                 directory will be recursed and send every \
+                                 text file found.")
+ 
+        self.parser.add_argument("-p", "--port", 
+                                 type=int, 
+                                 default=514,
+                                 help="Destination syslog port. Default: 514")
 
-    log_levels = ["quiet", "error", "warning", "info", "debug"]
+        self.parser.add_argument("-z", "--zip", 
+                                 action="store_true",
+                                 help="Send logs in gz files. \
+                                 Default: disabled")
 
-    formatter_class = argparse.RawDescriptionHelpFormatter
-    parser = argparse.ArgumentParser(__file__, formatter_class=formatter_class,
-                                     description="Send files to syslog")
-    parser.add_argument("-s", "--server", required=True,
-                        help="Syslog server or Receiver IP address")
+        self.parser.add_argument("-v", "--version", 
+                                 action="version",
+                                 version="%(prog)s {}".format(__version__))
 
-    parser.add_argument("-f", "--file", required=True,
-                        help="Logs to send. Can be files (messages, *.log) \
-                        or directory with logs. Warning: directory will be \
-                        recursed and send every text file found.")
+        self.parser.add_argument("-l", "--level", 
+                                 default="info", dest="level",
+                                 choices=self.log_levels,
+                                 help="Logging output level. Default: info")
 
-    parser.add_argument("-p", "--port", type=int, default=514,
-                        help="Destination syslog port. Default: 514")
-
-    parser.add_argument("-z", "--zip", action="store_true",
-                        help="Send logs in gz files. Default: disabled")
-
-    parser.add_argument("-v", "--version", action="version",
-                        version="%(prog)s {}".format(__version__))
-
-    parser.add_argument("-l", "--level", default="info", dest="level",
-                        choices=log_levels,
-                        help="Logging output level. Default: info")
-
-    args = parser.parse_args()
-    return args
+        
+        self.pargs = self.parser.parse_args()
+          
+ 
+    def get_args(self):
+        return self.pargs
+ 
 
 def config_logging(level):
     """Configure logging parameters"""
@@ -180,47 +197,49 @@ def main():
 
     linecount = 0
     linetotal = 0
-
-    args = parse_args()
-    config_logging(args.level)
-    logging.debug("******************%s INITIALIZED********************", __name__)
-
-    if os.path.exists(args.file):
-        logging.debug("File found at: %s", args.file)
-    else:
-        logging.error("File not found: %s", args.file)
+    
+    args = Args(sys.argv)
+    pargs = args.get_args()
+    
+    config_logging(pargs.level)
+    logging.debug("****************%s INITIALIZED******************", __name__)
 
     # Optimistically opening socket
-    sock = open_socket(args.server, args.port)
+    sock = open_socket(pargs.server, pargs.port)
     if not sock:
         logging.error("Could not connect to server.\n"
                       "Server: %s:%s", args.server, args.port)
         sys.exit()
     else:
-        logging.debug("Socket established to %s on port %s", args.server, args.port)
-
-    # Process files
-    try:
-        for argname in glob(args.file):
-            name = os.path.realpath(argname)
-
-            if os.path.isdir(name):
-                logging.debug("Searching directory %s", name)
-                for filename in walk_dir(name):
-                    logging.debug("Found file: %s, checking", filename)
-                    linecount = send_to_syslog(filename, sock, args.zip)
-                    linetotal += linecount
-            else:
-                linecount = send_to_syslog(args.file, sock, args.zip)
-                linetotal += linecount
-
-    except KeyboardInterrupt:
-        logging.error("Halting: Control-C Detected")
+        logging.debug("Socket established to %s on port %s", 
+                      pargs.server, pargs.port)
+    
+    argnames = glob(pargs.file)
+    if not argnames:
+        logging.info("Unable to access given directory or file: %s", pargs.file)
         sys.exit()
+     
+    # Process files
+    for argname in argnames:
+        name = os.path.realpath(argname)
+                        
+        if os.path.isdir(name):
+            logging.debug("Searching directory %s", name)
+            for filename in walk_dir(name):
+                logging.debug("Found file: %s, checking", filename)
+                linecount = send_to_syslog(filename, sock, pargs.zip)
+                linetotal += linecount
+        else:
+            linecount = send_to_syslog(name, sock, pargs.zip)
+            linetotal += linecount
 
-    finally:
         logging.info("Total lines Sent: %s", linetotal)
         logging.shutdown()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    
+    except KeyboardInterrupt:
+        logging.error("Halting: Control-C Detected")
+        sys.exit()
